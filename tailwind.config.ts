@@ -8,16 +8,29 @@ const config: Config = {
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
     "./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}",
   ],
-  theme: {
-    extend: {
-      backgroundImage: {
-        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-        "gradient-conic":
-          "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
-      },
-    },
-  },
+  theme: {},
   darkMode: "class",
-  plugins: [nextui()],
+
+  plugins: [
+    nextui({
+      themes: {
+        light: {
+          // ...
+          colors: {
+            foreground: "#000",
+            background: "#f0f0f0",
+          },
+        },
+        dark: {
+          // ...
+          colors: {
+            foreground: "#fff",
+            background: "#101415",
+          },
+        },
+        // ... custom themes
+      },
+    }),
+  ],
 };
 export default config;

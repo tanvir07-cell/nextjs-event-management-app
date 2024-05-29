@@ -39,7 +39,7 @@ export const register = async (prevState: any, formData: FormData) => {
     return { message: err.message, code: err.code };
   }
 
-  redirect("/");
+  redirect("/dashboard");
 };
 
 export const LogIn = async (prevState: any, formData: FormData) => {
@@ -62,5 +62,10 @@ export const LogIn = async (prevState: any, formData: FormData) => {
     return { message: err.message, code: err.code };
   }
 
-  redirect("/");
+  redirect("/dashboard");
+};
+
+export const LogOut = async () => {
+  cookies().delete(COOKIE_NAME);
+  redirect("/signin");
 };

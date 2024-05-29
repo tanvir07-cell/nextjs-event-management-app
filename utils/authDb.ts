@@ -1,26 +1,29 @@
-"use server";
+import "server-only";
 
-import "dotenv/config";
-import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import prisma from "./db";
 
+import "dotenv/config";
+import bcrypt from "bcrypt";
+
+const SECRET = process.env.JWT_SECRET;
+
 export const createTokenForUser = (userId: string) => {
-  return jwt.sign({ userId }, process.env.JWT_SECRET);
+  const token = jwt.sign({ id: userId }, SECRET);
+  return token;
 };
 
 export const getUserFromToken = async (token: {
   name: string;
   value: string;
 }) => {
-  const payload = jwt.verify(token.value, process.env.JWT_SECRET) as {
-    id: string;
-  };
+  const payload = jwt.verify(token.value, SECRET) as { id: string };
   const user = await prisma.user.findFirst({
     where: {
       id: payload.id,
     },
   });
+
   return user;
 };
 
@@ -31,23 +34,24 @@ export const signIn = async ({
   email: string;
   password: string;
 }) => {
-  const user = await prisma.user.findFirst({
+  const match = await prisma.user.findFirst({
     where: {
-      email,
+      email: email,
     },
   });
-
-  if (!user) {
-    throw new Error("User not found");
+  if (!match) {
+    throw new Error("No user found");
   }
-  // if user exist then compare the password
-  const isPasswordValid = await comparePW(password, user.password);
+  // check password is matched or not using bcrypt:
+  const checkPassword = await comparePassword(password, match.password);
 
-  if (!isPasswordValid) {
-    throw new Error("Invalid User Credentials");
+  if (!checkPassword) {
+    throw new Error("invalid user credentials");
   }
 
-  const token = createTokenForUser(user.id);
+  // if password is matched, then create a token for the user:
+  const token = createTokenForUser(match.id);
+  const { password: pw, ...user } = match;
   return { user, token };
 };
 
@@ -62,13 +66,13 @@ export const signUp = async ({
   firstName: string;
   lastName: string;
 }) => {
-  const hashedPw = await hashPW(password);
+  const hashedPassword = await hashPW(password);
   const user = await prisma.user.create({
     data: {
+      email,
+      password: hashedPassword,
       firstName,
       lastName,
-      email,
-      password: hashedPw,
     },
   });
   const token = createTokenForUser(user.id);
@@ -79,6 +83,6 @@ export const hashPW = (password: string) => {
   return bcrypt.hash(password, 10);
 };
 
-export const comparePW = (password: string, hash: string) => {
+async function comparePassword(password: string, hash: string) {
   return bcrypt.compare(password, hash);
-};
+}

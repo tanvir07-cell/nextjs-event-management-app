@@ -2,7 +2,7 @@ import { PropsWithChildren } from "react";
 import Side from "./Side";
 import Nav from "./Nav";
 
-const Drawer = ({ children }: PropsWithChildren<{}>) => {
+const Drawer = async ({ children }: PropsWithChildren<{}>) => {
   return (
     <div className="flex w-screen h-screen">
       <aside className="w-[200px] min-w-[200px] max-w-[200px] h-full border-r border-default-50">

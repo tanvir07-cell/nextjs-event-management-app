@@ -5,7 +5,6 @@ import { Input, Button } from "@nextui-org/react";
 import Link from "next/link";
 import { register } from "@/actions/auth";
 import SubmitBtn from "./SubmitBtn";
-import { useRef } from "react";
 
 const initial = {
   message: null,

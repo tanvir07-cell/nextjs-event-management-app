@@ -3,6 +3,10 @@
 import { Layers3 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@nextui-org/react";
+import { useTransition } from "react";
+import { LogOut } from "@/actions/auth";
+import { usePathname } from "next/navigation";
+import clsx from "clsx";
 
 const links = [
   { route: "/dashboard", name: "Home" },
@@ -12,8 +16,16 @@ const links = [
   { route: "/dashboard/settings", name: "Settings" },
 ];
 
+const getActivePath = (path: string, route: string) => {
+  if (path === route) {
+    return "bg-primary hover:bg-primary";
+  }
+  return "hover:bg-content1";
+};
+
 const Side = () => {
-  const activeClass = "bg-primary hover:bg-primary";
+  const path = usePathname();
+  const [isPending, startTransition] = useTransition();
 
   return (
     <div className="w-full h-full px-3 relative">
@@ -31,7 +43,10 @@ const Side = () => {
           <div className="w-full" key={link.route}>
             <Link href={link.route}>
               <div
-                className={`w-full h-full py-2 px-2 hover:bg-content1 rounded-lg `}
+                className={clsx(
+                  "w-full h-full py-2 px-2 hover:bg-content1 rounded-lg",
+                  getActivePath(path, link.route),
+                )}
               >
                 {link.name}
               </div>
@@ -40,7 +55,16 @@ const Side = () => {
         ))}
       </div>
       <div className="absolute bottom-0 w-full left-0 px-4">
-        <Button fullWidth variant="ghost">
+        <Button
+          isLoading={isPending}
+          onClick={() => {
+            startTransition(() => {
+              LogOut();
+            });
+          }}
+          fullWidth
+          variant="ghost"
+        >
           Sign Out
         </Button>
       </div>

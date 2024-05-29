@@ -23,6 +23,8 @@ model User {
   events    Event[]  @relation("UserEvents")
 }
 
+
+
 model Event {
   id           String      @id @default(uuid())
   createdAt    DateTime    @default(now())

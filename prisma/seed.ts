@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcrypt";
 
 const prisma = new PrismaClient();
 
@@ -11,7 +12,7 @@ async function main() {
 
       lastName: "user1",
       email: "user1@example.com",
-      password: "password1",
+      password: bcrypt.hashSync("password", 10),
     },
   });
 
@@ -20,8 +21,9 @@ async function main() {
       id: crypto.randomUUID(),
       firstName: "user2",
       lastName: "user2",
+
       email: "user2@example.com",
-      password: "password2",
+      password: bcrypt.hashSync("password", 10),
     },
   });
 
@@ -41,14 +43,29 @@ async function main() {
       status: "LIVE",
     },
   });
-
   const event2 = await prisma.event.create({
     data: {
       id: crypto.randomUUID(),
       name: "Event 2",
+      startOn: new Date("2024-06-01T10:00:00Z"),
+      createdById: user1.id,
+      description: "Description for Event 2",
+      streetNumber: 123,
+      street: "Main St",
+      zip: 12345,
+      bldg: "Building A",
+      isPrivate: false,
+      status: "LIVE",
+    },
+  });
+
+  const event3 = await prisma.event.create({
+    data: {
+      id: crypto.randomUUID(),
+      name: "Event 3",
       startOn: new Date("2024-07-01T10:00:00Z"),
       createdById: user2.id,
-      description: "Description for Event 2",
+      description: "Description for Event 3",
       streetNumber: 456,
       street: "Second St",
       zip: 67890,
@@ -91,6 +108,15 @@ async function main() {
       attendeeId: attendee2.id,
       eventId: event2.id,
       status: "MAYBE",
+    },
+  });
+
+  await prisma.rsvp.create({
+    data: {
+      id: crypto.randomUUID(),
+      attendeeId: attendee2.id,
+      eventId: event3.id,
+      status: "GOING",
     },
   });
 }
