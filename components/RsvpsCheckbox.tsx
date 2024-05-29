@@ -12,7 +12,7 @@ const RsvpsCheckbox = ({ name, id }) => {
 
   const handleClick = () => {
     startTransition(() => {
-      setChecked(id);
+      setChecked((prev) => !prev);
       createRsvps(id);
       localStorage.setItem(`event-${id}`, JSON.stringify(!checked));
     });
