@@ -1,5 +1,4 @@
-import "server-only";
-
+"use server";
 import { cookies } from "next/headers";
 import { COOKIE_NAME } from "./constants";
 import { getUserFromToken } from "./authDb";

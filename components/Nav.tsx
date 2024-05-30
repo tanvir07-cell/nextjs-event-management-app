@@ -2,7 +2,7 @@
 import { Input } from "@nextui-org/react";
 import { Button, Tooltip } from "@nextui-org/react";
 import { CirclePlus } from "lucide-react";
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import {
   Modal,
   ModalContent,
